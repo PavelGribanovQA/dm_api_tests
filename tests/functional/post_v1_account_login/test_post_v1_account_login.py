@@ -4,16 +4,16 @@ from dm_api_account.apis.account_api import AccountApi
 from dm_api_account.apis.login_api import LoginApi
 from api_mailhog.apis.mailhog_api import MailhogApi
 
-#4. сценарий для метода post_v1_account_login - Authenticate via credentials
-def test_post_v1_account():
 
+# 4. сценарий для метода post_v1_account_login - Authenticate via credentials
+def test_post_v1_account():
     # Объявляем креды
 
     account_api = AccountApi(host='http://5.63.153.31:5051')
     login_api = LoginApi(host='http://5.63.153.31:5051')
     mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
 
-    login = 'pt21'
+    login = 'pt24'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -39,7 +39,6 @@ def test_post_v1_account():
     print(response.status_code)
     print(response.text)
     assert response.status_code == 403, "Пользователь смог авторизоваться без активации!"
-
 
     # Получить письма из почтового сервера
     response = mailhog_api.get_api_v2_messages()
@@ -68,8 +67,10 @@ def test_post_v1_account():
     assert response.status_code == 200, "Пользователь не смог авторизоваться"
 
 
-
-def get_activation_token_by_login(login, response):
+def get_activation_token_by_login(
+        login,
+        response
+        ):
     token = None
     for item in response.json()['items']:
         user_data = loads(item['Content']['Body'])

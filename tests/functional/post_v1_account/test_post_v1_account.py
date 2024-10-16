@@ -11,7 +11,7 @@ def test_post_v1_account():
     login_api = LoginApi(host='http://5.63.153.31:5051')
     mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
 
-    login = 'pt18'
+    login = 'pt22'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -51,8 +51,10 @@ def test_post_v1_account():
     assert response.status_code == 200, "Пользователь не смог авторизоваться"
 
 
-
-def get_activation_token_by_login(login, response):
+def get_activation_token_by_login(
+        login,
+        response
+        ):
     token = None
     for item in response.json()['items']:
         user_data = loads(item['Content']['Body'])
@@ -60,9 +62,3 @@ def get_activation_token_by_login(login, response):
         if user_login == login:
             token = user_data['ConfirmationLinkUrl'].split('/')[-1]
     return token
-
-
-
-
-
-

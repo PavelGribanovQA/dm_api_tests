@@ -42,3 +42,17 @@ class AccountApi:
             headers=headers
         )
         return response
+
+    def put_v1_account_email(
+            self,
+            json_data
+    ):
+        headers = {
+            'accept': 'text/plain',
+        }
+        response = requests.put(
+            url=f'{self.host}/v1/account/email',
+            json=json_data,
+            headers=headers
+        )
+        return response
