@@ -4,7 +4,8 @@ from dm_api_account.apis.account_api import AccountApi
 from dm_api_account.apis.login_api import LoginApi
 from api_mailhog.apis.mailhog_api import MailhogApi
 from restclient.configuration import Configuration as MailhogConfiguration
-import restclient.configuration
+from restclient.configuration import Configuration as DMApiConfiguration
+
 import structlog
 
 structlog.configure(
@@ -21,13 +22,13 @@ structlog.configure(
 def test_post_v1_account():
     # Регистрация пользователя
     mailhog_configuration = MailhogConfiguration(host='http://5.63.153.31:5025')
-    dm_api_configuration = restclient.configuration.Configuration(host='http://5.63.153.31:5051', disable_log=False)
+    dm_api_configuration = DMApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
 
     account_api = AccountApi(configuration=dm_api_configuration)
     login_api = LoginApi(configuration=dm_api_configuration)
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
-    login = 'pt65'
+    login = 'pt72'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
