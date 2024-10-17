@@ -1,6 +1,7 @@
 certifi==2024.8.30
 charset-normalizer==3.3.2
 colorama==0.4.6
+curlify==2.2.1
 exceptiongroup==1.2.2
 Faker==29.0.0
 idna==3.10
