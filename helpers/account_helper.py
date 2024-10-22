@@ -49,8 +49,7 @@ class AccountHelper:
             "rememberMe": remember_me
         }
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
-        assert response.status_code == 200, "Пользователь не смог авторизоваться"
-        return response, response.status_code
+        return response
 
     @staticmethod
     def get_activation_token_by_login(
@@ -66,9 +65,6 @@ class AccountHelper:
 
             user_login = user_data['Login']
             if user_login == login:
-                print(user_data)
                 token = user_data['ConfirmationLinkUrl'].split('/')[-1]
-                print(token)
-                print(type(token))
         return token
 
