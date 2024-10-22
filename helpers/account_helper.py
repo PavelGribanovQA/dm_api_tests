@@ -15,7 +15,7 @@ class AccountHelper:
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
 
-    def register_new_user(
+    def register_user_and_activate(
             self,
             login: str,
             password: str,
@@ -29,6 +29,37 @@ class AccountHelper:
 
         response = self.dm_account_api.account_api.post_v1_account(json_data=json_data)
         assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
+        response = self.mailhog.mailhog_api.get_api_v2_messages()
+        assert response.status_code == 200, "Письма не были получены"
+        token = self.get_activation_token_by_login(login=login, response=response)
+        assert token is not None, f"Токен для пользователя {login}, не был получен"
+        response = self.dm_account_api.account_api.put_v1_account_token(token=token)
+        assert response.status_code == 200, "Пользователь не был активирован"
+        return response
+
+    def register_user_without_activate(
+            self,
+            login: str,
+            password: str,
+            email: str
+    ):
+        json_data = {
+            'login': login,
+            'email': email,
+            'password': password,
+        }
+
+        response = self.dm_account_api.account_api.post_v1_account(json_data=json_data)
+        assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
+        return response
+
+    def activate_new_user(
+            self,
+            login: str,
+            password: str,
+            email: str
+    ):
+
         response = self.mailhog.mailhog_api.get_api_v2_messages()
         assert response.status_code == 200, "Письма не были получены"
         token = self.get_activation_token_by_login(login=login, response=response)

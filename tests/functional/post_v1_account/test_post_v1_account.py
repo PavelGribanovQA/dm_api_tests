@@ -34,5 +34,5 @@ def test_post_v1_account():
     password = '123456789'
     email = f'{login}@mail.com'
 
-    account_helper.register_new_user(login=login, password=password, email=email)
+    account_helper.register_user_and_activate(login=login, password=password, email=email)
     account_helper.user_login(login=login, password=password)
