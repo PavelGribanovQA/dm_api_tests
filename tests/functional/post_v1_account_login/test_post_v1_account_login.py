@@ -32,15 +32,15 @@ def test_post_v1_account_login():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'pt132'
+    login = 'pt143'
     password = '123456789'
     email = f'{login}@mail.com'
 
     # Проверить что не созданный пользователь не может войти
     response = account_helper.user_login(login=login, password=password)
     assert response.status_code == 400, "Не зарегистрированный пользователь  смог авторизоваться"
-    # Регистрация и кстивация
+    # Регистрация и активация
     account_helper.register_user_and_activate(login=login, password=password, email=email)
-    # Логинемся
+    # Логинимся
     response = account_helper.user_login(login=login, password=password)
     assert response.status_code == 200, "Пользователь не смог авторизоваться"

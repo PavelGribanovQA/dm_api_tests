@@ -68,6 +68,22 @@ class AccountHelper:
         assert response.status_code == 200, "Пользователь не был активирован"
         return response
 
+    def change_user_email(
+            self,
+            login: str,
+            password: str,
+            email: str
+    ):
+        json_data = {
+            'login': login,
+            'email': email,
+            'password': password,
+        }
+
+        response = self.dm_account_api.account_api.put_v1_account_email(json_data=json_data)
+        assert response.status_code == 200, f"Email не был заменен"
+        return response
+
     def user_login(
             self,
             login: str,
