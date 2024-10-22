@@ -1,4 +1,5 @@
 from json import loads
+from pprint import pprint
 
 from helpers.account_helper import AccountHelper
 from restclient.configuration import Configuration as MailhogConfiguration
@@ -29,8 +30,7 @@ def test_post_v1_account():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-
-    login = 'pt81'
+    login = 'pt123'
     password = '123456789'
     email = f'{login}@mail.com'
 

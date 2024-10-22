@@ -1,5 +1,7 @@
 from json import loads
 
+from requests import JSONDecodeError
+
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
 
@@ -48,7 +50,7 @@ class AccountHelper:
         }
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
         assert response.status_code == 200, "Пользователь не смог авторизоваться"
-        return response
+        return response, response.status_code
 
     @staticmethod
     def get_activation_token_by_login(
@@ -57,8 +59,16 @@ class AccountHelper:
     ):
         token = None
         for item in response.json()['items']:
-            user_data = loads(item['Content']['Body'])
+            try:
+                user_data = loads(item['Content']['Body'])
+            except (JSONDecodeError, KeyError):
+                continue
+
             user_login = user_data['Login']
             if user_login == login:
+                print(user_data)
                 token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+                print(token)
+                print(type(token))
         return token
+
