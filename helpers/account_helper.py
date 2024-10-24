@@ -5,6 +5,14 @@ from requests import JSONDecodeError
 
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
+from retrying import retry
+
+
+def retry_if_result_none(
+        result
+        ):
+    """Return True if we should retry (in this case when result is None), False otherwise"""
+    return result is None
 
 
 def retrier(
@@ -111,7 +119,8 @@ class AccountHelper:
         }
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
         return response
-    @retrier
+
+    @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
     def get_activation_token_by_login(
             self,
             login,
