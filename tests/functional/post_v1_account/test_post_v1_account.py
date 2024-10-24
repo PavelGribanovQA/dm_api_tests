@@ -1,3 +1,5 @@
+from collections import namedtuple
+from datetime import datetime
 from json import loads
 from pprint import pprint
 
@@ -44,13 +46,25 @@ def account_helper(
     account_helper = AccountHelper(dm_account_api=account_api, mailhog=mailhog_api)
     return account_helper
 
-
-def test_post_v1_account(
-        account_helper
-):
-    login = 'pt171'
+@pytest.fixture
+def prepare_user():
+    now = datetime.now()
+    data = now.strftime("%d_%m_%Y_%H_%M_%S")
+    login = f'paveltest{data}'
     password = '123456789'
     email = f'{login}@mail.com'
+    User = namedtuple("user", ["login", "password", "email"])
+    user = User(login=login, password=password, email=email)
+    return user
+
+
+def test_post_v1_account(
+        account_helper,
+        prepare_user
+):
+    login = prepare_user.login
+    password = prepare_user.password
+    email = prepare_user.email
 
     account_helper.register_user_and_activate(login=login, password=password, email=email)
     account_helper.user_login(login=login, password=password)
