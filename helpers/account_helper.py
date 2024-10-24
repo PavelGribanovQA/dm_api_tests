@@ -10,7 +10,7 @@ from retrying import retry
 
 def retry_if_result_none(
         result
-        ):
+):
     """Return True if we should retry (in this case when result is None), False otherwise"""
     return result is None
 
@@ -60,6 +60,21 @@ class AccountHelper:
 
         self.register_user_without_activate(login=login, password=password, email=email)
         self.activate_new_user(login=login, password=password, email=email)
+
+    def auth_client(
+            self,
+            login: str,
+            password: str
+    ):
+        respose = self.dm_account_api.login_api.post_v1_account_login(
+            json_data={
+                'login': login,
+                'password': password
+                }
+            )
+        token = {"x-dm-auth-token": respose.headers["x-dm-auth-token"]}
+        self.dm_account_api.account_api.set_headers(token)
+        self.dm_account_api.login_api.set_headers(token)
 
     def register_user_without_activate(
             self,
