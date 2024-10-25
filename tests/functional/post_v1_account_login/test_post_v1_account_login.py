@@ -20,10 +20,7 @@ structlog.configure(
 )
 
 
-# 4. сценарий для метода post_v1_account_login - Authenticate via credentials
 def test_post_v1_account_login():
-    # Объявляем креды
-
     mailhog_configuration = MailhogConfiguration(host='http://5.63.153.31:5025')
     dm_api_configuration = DMApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
 
@@ -32,15 +29,14 @@ def test_post_v1_account_login():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'pt143'
+    login = 'pt166'
     password = '123456789'
     email = f'{login}@mail.com'
 
-    # Проверить что не созданный пользователь не может войти
     response = account_helper.user_login(login=login, password=password)
     assert response.status_code == 400, "Не зарегистрированный пользователь  смог авторизоваться"
-    # Регистрация и активация
+
     account_helper.register_user_and_activate(login=login, password=password, email=email)
-    # Логинимся
+
     response = account_helper.user_login(login=login, password=password)
     assert response.status_code == 200, "Пользователь не смог авторизоваться"
