@@ -70,9 +70,11 @@ class AccountHelper:
             json_data={
                 'login': login,
                 'password': password
-                }
-            )
-        token = {"x-dm-auth-token": respose.headers["x-dm-auth-token"]}
+            }
+        )
+        token = {
+            "x-dm-auth-token": respose.headers["x-dm-auth-token"]
+            }
         self.dm_account_api.account_api.set_headers(token)
         self.dm_account_api.login_api.set_headers(token)
 
@@ -135,10 +137,36 @@ class AccountHelper:
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
         return response
 
+    def change_password(self, login: str, email: str, old_password: str, new_password: str):
+        token = self.user_login(login=login, password=old_password)
+        token = token.headers["x-dm-auth-token"]
+        print(token)
+        self.dm_account_api.account_api.post_v1_account_password(
+            json_data={
+                "login": login,
+                "email": email
+            },
+            headers={
+                token
+            },
+        )
+        token = self.get_activation_token_by_login(login=login, token_type="reset")
+        self.dm_account_api.account_api.put_v1_account_password(
+            json_data={
+                "login": login,
+                "oldPassword": old_password,
+                "newPassword": new_password,
+                "token": token
+            }
+        )
+
+
+
     @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
     def get_activation_token_by_login(
             self,
             login,
+            token_type = "activation"
     ):
         token = None
         response = self.mailhog.mailhog_api.get_api_v2_messages()
@@ -149,6 +177,10 @@ class AccountHelper:
                 continue
 
             user_login = user_data['Login']
-            if user_login == login:
-                token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+            activation_token = user_data.get("ConfirmationLinkUrl")
+            reset_token = user_data.get("ConfirmationLinkUri")
+            if user_login == login and activation_token and token_type == "activation":
+                token = activation_token.split("/")[-1]
+            elif user_login == login and reset_token and token_type == "reset":
+                token = reset_token.split("/")[-1]
         return token

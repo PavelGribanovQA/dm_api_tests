@@ -65,3 +65,31 @@ class AccountApi(RestClient):
             headers=headers
         )
         return response
+
+    def put_v1_account_password(
+            self,
+            json_data
+    ):
+        headers = {
+            'accept': 'text/plain',
+        }
+        response = self.put(
+            path=f'/v1/account/password',
+            json=json_data,
+            headers=headers
+        )
+        return response
+
+    def post_v1_account_password(
+            self,
+            json_data,
+            headers
+    ):
+        headers = {
+            'accept': 'text/plain',
+        }
+        response = self.post(
+            path=f'/v1/account/password',
+            json=json_data
+        )
+        return response
