@@ -80,6 +80,7 @@ class RestClient:
         rest_response = self.session.request(method=method, url=full_url, **kwargs)
         curl = curlify.to_curl(rest_response.request)
         print(curl)
+        print(full_url)
         log.msg(
             event='Response',
             status_cod=rest_response.status_code,

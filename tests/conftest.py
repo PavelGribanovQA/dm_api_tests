@@ -2,6 +2,7 @@ from collections import namedtuple
 from datetime import datetime
 
 import pytest
+import requests
 
 from helpers.account_helper import AccountHelper
 from restclient.configuration import Configuration as MailhogConfiguration

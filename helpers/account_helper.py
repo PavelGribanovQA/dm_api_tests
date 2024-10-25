@@ -77,6 +77,7 @@ class AccountHelper:
             }
         self.dm_account_api.account_api.set_headers(token)
         self.dm_account_api.login_api.set_headers(token)
+        print(token)
 
     def register_user_without_activate(
             self,
