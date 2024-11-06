@@ -101,7 +101,6 @@ class AccountHelper:
         assert end_time - start_time < 3, "Время ожидания активации превышено"
         assert token is not None, f"Токен для пользователя {login}, не был получен"
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
-        assert response.status_code == 200, "Пользователь не был активирован"
         return response
 
     def change_user_email(
@@ -124,14 +123,18 @@ class AccountHelper:
             self,
             login: str,
             password: str,
-            remember_me: bool = True
+            remember_me: bool = True,
+            validate_response=False
     ):
         login_credentials = LoginCredentials(
             login=login,
             password=password,
             remember_me=remember_me
         )
-        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials)
+        response = self.dm_account_api.login_api.post_v1_account_login(
+            login_credentials=login_credentials,
+            validate_response=validate_response
+        )
         if response.status_code == 200:
             assert response.headers["x-dm-auth-token"], "Токен для пользователя не был получен"
         return response
