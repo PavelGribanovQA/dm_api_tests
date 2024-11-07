@@ -66,7 +66,8 @@ class AccountApi(RestClient):
 
     def put_v1_account_email(
             self,
-            change_email=ChangeEmail
+            change_email=ChangeEmail,
+            validate_response=True
     ):
         headers = {
             'accept': 'text/plain',
@@ -76,12 +77,14 @@ class AccountApi(RestClient):
             json=change_email.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
-
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
     def put_v1_account_password(
             self,
-            change_password=ChangePassword
+            change_password=ChangePassword,
+            validate_response=True
     ):
         headers = {
             'accept': 'text/plain',
@@ -91,12 +94,15 @@ class AccountApi(RestClient):
             json=change_password.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
     def post_v1_account_password(
             self,
             reset_password: ResetPassword,
-            headers
+            headers,
+            validate_response=True
     ):
         headers = {
             'accept': 'text/plain',
@@ -105,4 +111,6 @@ class AccountApi(RestClient):
             path=f'/v1/account/password',
             json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response

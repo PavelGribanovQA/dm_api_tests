@@ -3,11 +3,13 @@ from json import loads
 
 from requests import JSONDecodeError
 
+from dm_api_account.models import user_envelope
 from dm_api_account.models.change_email import ChangeEmail
 from dm_api_account.models.change_password import ChangePassword
 from dm_api_account.models.login_credentials import LoginCredentials
 from dm_api_account.models.registration import Registration
 from dm_api_account.models.reset_password import ResetPassword
+from dm_api_account.models.user_envelope import UserEnvelope
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
 from retrying import retry
@@ -116,7 +118,7 @@ class AccountHelper:
         )
 
         response = self.dm_account_api.account_api.put_v1_account_email(change_email=change_email)
-        assert response.status_code == 200, f"Email не был заменен"
+        assert response.resource is not None, f"Email не был заменен"
         return response
 
     def user_login(
@@ -144,7 +146,8 @@ class AccountHelper:
             login: str,
             email: str,
             old_password: str,
-            new_password: str
+            new_password: str,
+            validate_response=False
     ):
         token = self.user_login(login=login, password=old_password)
         token = token.headers["x-dm-auth-token"]
@@ -153,11 +156,13 @@ class AccountHelper:
             login=login,
             email=email
         )
+
         self.dm_account_api.account_api.post_v1_account_password(
             reset_password=reset_password,
             headers={
                 token
             },
+            validate_response=validate_response
         )
         token = self.get_activation_token_by_login(login=login, token_type="reset")
         change_password = ChangePassword(
@@ -167,6 +172,7 @@ class AccountHelper:
             token=token
         )
         self.dm_account_api.account_api.put_v1_account_password(change_password=change_password)
+
 
     @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
     def get_activation_token_by_login(
