@@ -88,7 +88,6 @@ class AccountHelper:
         )
 
         response = self.dm_account_api.account_api.post_v1_account(registration=registration)
-        assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
         return response
 
     def activate_new_user(

@@ -63,3 +63,4 @@ def prepare_user():
     User = namedtuple("user", ["login", "password", "email"])
     user = User(login=login, password=password, email=email)
     return user
+

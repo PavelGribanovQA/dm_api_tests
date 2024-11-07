@@ -1,5 +1,5 @@
 import datetime
-
+import pytest
 from hamcrest import (
     assert_that,
     has_property,
@@ -9,6 +9,8 @@ from hamcrest import (
     has_properties,
     equal_to,
 )
+
+from checkers.http_checkers import check_status_code_http
 
 
 def test_post_v1_account(
@@ -41,3 +43,29 @@ def test_post_v1_account(
         )
     )
     print(response)
+
+
+@pytest.mark.parametrize(
+    "login, email, password, error_message, expected_status_code",
+    [
+        # 1. Короткий пароль (менее 6 символов)
+        ("valid_login", "validemail@example.com", "12345", "Validation failed", 400),
+
+        # 2. Невалидный email (без символа '@')
+        ("valid_login", "invalidemail.com", "valid_password123", "Validation failed", 400),
+
+        # 3. Невалидный логин (1 символ)
+        ("l", "validemail@example.com", "valid_password123", "Validation failed", 400),
+    ]
+)
+def test_post_v1_account_invalid_credentials(
+        account_helper,
+        login,
+        email,
+        password,
+        error_message,
+        expected_status_code
+):
+    # Используем контекстный менеджер для проверки ожидаемого статуса и сообщения об ошибке
+    with check_status_code_http(expected_status_code=expected_status_code, expected_massage=error_message):
+        response = account_helper.register_user_without_activate(login=login, password=password, email=email)
