@@ -126,7 +126,8 @@ class AccountHelper:
             login: str,
             password: str,
             remember_me: bool = True,
-            validate_response=False
+            validate_response=False,
+            validate_headers=False
     ):
         login_credentials = LoginCredentials(
             login=login,
@@ -137,7 +138,7 @@ class AccountHelper:
             login_credentials=login_credentials,
             validate_response=validate_response
         )
-        if response.status_code == 200:
+        if validate_headers:
             assert response.headers["x-dm-auth-token"], "Токен для пользователя не был получен"
         return response
 
