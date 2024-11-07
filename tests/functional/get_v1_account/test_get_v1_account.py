@@ -10,8 +10,14 @@ from hamcrest import (
     equal_to,
 )
 
-def test_get_v1_account_auth(auth_account_helper):
-    response = auth_account_helper.dm_account_api.account_api.get_v1_account(validate_response=True)
+from checkers.http_checkers import check_status_code_http
+
+
+def test_get_v1_account_auth(
+        auth_account_helper
+):
+    with check_status_code_http():
+        response = auth_account_helper.dm_account_api.account_api.get_v1_account(validate_response=True)
     assert_that(
         response, all_of(
             has_property("resource", has_property("login", starts_with("paveltest"))),
@@ -34,5 +40,9 @@ def test_get_v1_account_auth(auth_account_helper):
 
     print(response)
 
-def test_get_v1_account_no_auth(account_helper):
-    account_helper.dm_account_api.account_api.get_v1_account(validate_response=False)
+
+def test_get_v1_account_no_auth(
+        account_helper
+):
+    with check_status_code_http(401, 'User must be authenticated'):
+        account_helper.dm_account_api.account_api.get_v1_account(validate_response=False)
