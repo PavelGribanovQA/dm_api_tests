@@ -11,6 +11,7 @@ from hamcrest import (
 )
 
 from checkers.http_checkers import check_status_code_http
+from checkers.post_v1_account import PostV1Account
 
 
 def test_post_v1_account(
@@ -23,26 +24,10 @@ def test_post_v1_account(
 
     account_helper.register_user_and_activate(login=login, password=password, email=email)
     response = account_helper.user_login(login=login, password=password, validate_response=True)
-    assert_that(
-        response, all_of(
-            has_property("resource", has_property("login", starts_with("paveltest"))),
-            has_property("resource", has_property("registration", instance_of(datetime.datetime))),
-            has_property(
-                "resource", has_properties(
-                    {
-                        "rating": has_properties(
-                            {
-                                "enabled": equal_to(True),
-                                "quality": equal_to(0),
-                                "quantity": equal_to(0)
-                            }
-                        )
-                    }
-                )
-            )
-        )
-    )
-    print(response)
+    PostV1Account.check_response_values(response)
+
+
+
 
 
 @pytest.mark.parametrize(
@@ -66,6 +51,5 @@ def test_post_v1_account_invalid_credentials(
         error_message,
         expected_status_code
 ):
-    # Используем контекстный менеджер для проверки ожидаемого статуса и сообщения об ошибке
     with check_status_code_http(expected_status_code=expected_status_code, expected_massage=error_message):
         response = account_helper.register_user_without_activate(login=login, password=password, email=email)
