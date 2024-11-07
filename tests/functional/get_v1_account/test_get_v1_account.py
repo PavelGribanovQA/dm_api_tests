@@ -1,4 +1,5 @@
 import datetime
+# from assertpy import assert_that, soft_assertions
 
 from hamcrest import (
     assert_that,
@@ -11,13 +12,22 @@ from hamcrest import (
 )
 
 from checkers.http_checkers import check_status_code_http
+from dm_api_account.models.user_details_envelope import UserRole
 
 
 def test_get_v1_account_auth(
         auth_account_helper
 ):
     with check_status_code_http():
-        response = auth_account_helper.dm_account_api.account_api.get_v1_account(validate_response=True)
+        response = auth_account_helper.dm_account_api.account_api.get_v1_account()
+    # with soft_assertions():
+    #     assert_that(response.resource.login).is_equal_to("paveltest")
+    #     print("Прошла проверка логина")
+    #     assert_that(response.resource.online).is_instance_of(datetime)
+    #     print("Прошла проверка даты")
+    #     assert_that(response.resource.roles).contains(UserRole.GUEST, UserRole.PLAYER)
+    #     print("Прошла проверка ролей пользователя")
+
     assert_that(
         response, all_of(
             has_property("resource", has_property("login", starts_with("paveltest"))),
