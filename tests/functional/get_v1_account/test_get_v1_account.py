@@ -11,13 +11,6 @@ def test_get_v1_account_auth(
     with check_status_code_http():
         response = auth_account_helper.dm_account_api.account_api.get_v1_account()
         GetV1Account.check_response_values(response)
-    # with soft_assertions():
-    #     assert_that(response.resource.login).is_equal_to("paveltest")
-    #     print("Прошла проверка логина")
-    #     assert_that(response.resource.online).is_instance_of(datetime)
-    #     print("Прошла проверка даты")
-    #     assert_that(response.resource.roles).contains(UserRole.GUEST, UserRole.PLAYER)
-    #     print("Прошла проверка ролей пользователя")
 
 
 
