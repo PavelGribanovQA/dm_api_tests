@@ -1,6 +1,7 @@
 import time
 from json import loads
 
+import allure
 from requests import JSONDecodeError
 
 from dm_api_account.models import user_envelope
@@ -53,6 +54,7 @@ class AccountHelper:
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
 
+    @allure.step('Регистрация нового пользователя')
     def register_user_and_activate(
             self,
             login: str,
@@ -120,6 +122,7 @@ class AccountHelper:
         assert response.resource is not None, f"Email не был заменен"
         return response
 
+    @allure.step('Аутентификация пользователя')
     def user_login(
             self,
             login: str,
