@@ -24,10 +24,10 @@ structlog.configure(
 )
 
 options = (
-    'srvice.dm_api_account',
-    'srvice.mailhog',
+    'service.dm_api_account',
+    'service.mailhog',
     'user.login',
-    'user.password'
+    'user.password',
 )
 
 
@@ -44,24 +44,24 @@ def set_config(
         v.set(f"{option}", request.config.getoption(f"--{option}"))
 
 
-def pytest_addoptions(
+def pytest_addoption(
         parser
 ):
-    parser.addoption("--env", actions="store", default="stg", help="run stg")
+    parser.addoption("--env", action="store", default="stg", help="run stg")
     for option in options:
-        parser.addoption(f'--{option}', actions="store", default=None)
+        parser.addoption(f'--{option}', action="store", default=None)
 
 
 @pytest.fixture(scope="session")
 def mailhog_api():
-    mailhog_configuration = MailhogConfiguration(host=v.get("srvice.mailhog"), disable_log=False)
+    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=False)
     mailhog_client = MailHogApi(configuration=mailhog_configuration)
     return mailhog_client
 
 
 @pytest.fixture(scope="session")
 def account_api():
-    dm_api_configuration = DMApiConfiguration(host=v.get("srvice.dm_api_account"), disable_log=False)
+    dm_api_configuration = DMApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
     account = DMApiAccount(configuration=dm_api_configuration)
     return account
 
@@ -79,10 +79,12 @@ def account_helper(
 def auth_account_helper(
         mailhog_api
 ):
-    dm_api_configuration = DMApiConfiguration(host=v.get("srvice.dm_api_account"), disable_log=False)
+    dm_api_configuration = DMApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
     account = DMApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)
-    account_helper.auth_client(login=v.get("user.login"), password=v.get("user.password"))
+    account_helper.auth_client(login=v.get("user.login"),
+                               password=v.get("user.password")
+                               )
     return account_helper
 
 
@@ -93,6 +95,6 @@ def prepare_user():
     login = f'paveltest{data}'
     password = v.get("user.password")
     email = f'{login}@mail.com'
-    User = namedtuple("user", ["login", "password", "email"])
+    User = namedtuple("User", ["login", "password", "email"])
     user = User(login=login, password=password, email=email)
     return user
