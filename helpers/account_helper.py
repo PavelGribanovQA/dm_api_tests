@@ -64,6 +64,7 @@ class AccountHelper:
         self.register_user_without_activate(login=login, password=password, email=email)
         self.activate_new_user(login=login, password=password, email=email)
 
+    @allure.step('Парсинг и передача токена в хедеры')
     def auth_client(
             self,
             login: str,
@@ -77,6 +78,7 @@ class AccountHelper:
         self.dm_account_api.login_api.set_headers(token)
         print(token)
 
+    @allure.step('Регистрация нового пользователя без активации')
     def register_user_without_activate(
             self,
             login: str,
@@ -92,6 +94,7 @@ class AccountHelper:
         response = self.dm_account_api.account_api.post_v1_account(registration=registration)
         return response
 
+    @allure.step('Активация нового пользователя')
     def activate_new_user(
             self,
             login: str,
@@ -106,6 +109,7 @@ class AccountHelper:
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         return response
 
+    @allure.step('Смена почты пользователя')
     def change_user_email(
             self,
             login: str,
@@ -144,6 +148,7 @@ class AccountHelper:
             assert response.headers["x-dm-auth-token"], "Токен для пользователя не был получен"
         return response
 
+    @allure.step('Смена пароля пользователя')
     def change_password(
             self,
             login: str,
@@ -176,7 +181,7 @@ class AccountHelper:
         )
         self.dm_account_api.account_api.put_v1_account_password(change_password=change_password)
 
-
+    @allure.step('Парсинг активационного токена пользователя')
     @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
     def get_activation_token_by_login(
             self,
