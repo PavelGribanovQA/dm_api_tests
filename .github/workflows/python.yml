@@ -23,7 +23,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest ./tests --alluredir=../allure-results --disble-warnings
+          pytest ./tests --alluredir=../allure-results --disable-warnings
         continue-on-error: true
       - name: Verify allure-results
         run: ls -R allure-results
