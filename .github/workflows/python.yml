@@ -42,7 +42,7 @@ jobs:
         with:
           distribution: 'microsoft'
           java-version: '17'
-      - run: sodo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && sudo tar -xzvf allure-2.32.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.32.0/allure /usr/bin/allure
+      - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && sudo tar -xzvf allure-2.32.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.32.0/allure /usr/bin/allure
       - name: Download allure results
         uses: actions/download-artifact@v3
       - run: allure generate -c ./allure-results -o _site
