@@ -49,9 +49,6 @@ jobs:
           sudo ln -s /opt/allure-2.32.0/bin/allure /usr/local/bin/allure
       - name: Download allure results
         uses: actions/download-artifact@v3
-        with:
-          name: allure-results
-          path: allure-results
       - run: allure generate -c ./allure-results -o _site
       - name: Store report
         uses: actions/upload-artifact@v3
