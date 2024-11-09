@@ -7,6 +7,7 @@ from requests import (
 )
 
 from restclient.configuration import Configuration
+from restclient.utelites import allure_attach
 
 
 class RestClient:
@@ -55,6 +56,7 @@ class RestClient:
     ):
         return self._send_request(method='DELETE', path=path, **kwargs)
 
+    @allure_attach
     def _send_request(
             self,
             method,
@@ -66,6 +68,7 @@ class RestClient:
 
         if self.disable_log:
             rest_response = self.session.request(method=method, url=full_url, **kwargs)
+            rest_response.raise_for_status()
             return rest_response
 
         log.msg(
@@ -87,6 +90,7 @@ class RestClient:
             headers=rest_response.headers,
             json=self._get_json(rest_response)
         )
+        rest_response.raise_for_status()
         return rest_response
 
     @staticmethod

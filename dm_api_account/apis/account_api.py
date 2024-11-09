@@ -1,27 +1,37 @@
+import allure
 import requests
 
+from dm_api_account.models.change_email import ChangeEmail
+from dm_api_account.models.change_password import ChangePassword
+from dm_api_account.models.registration import Registration
+from dm_api_account.models.reset_password import ResetPassword
+from dm_api_account.models.user_details_envelope import UserDetailsEnvelope
+from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
 class AccountApi(RestClient):
 
+    @allure.step("Зарегистрировать нового пользователя")
     def post_v1_account(
             self,
-            json_data
+            registration: Registration
     ):
         """
         Register new user
-        :param json_data:
+        :param
         :return:
         """
         response = self.post(
             path=f'/v1/account',
-            json=json_data
+            json=registration.model_dump(exclude_none=True, by_alias=True)
         )
         return response
 
+    @allure.step("Получить данные пользователя")
     def get_v1_account(
             self,
+            validate_response=True,
             **kwargs
     ):
         """
@@ -32,11 +42,15 @@ class AccountApi(RestClient):
             path=f'/v1/account',
             **kwargs
         )
+        if validate_response:
+            return UserDetailsEnvelope(**response.json())
         return response
 
+    @allure.step("Активировать пользователя")
     def put_v1_account_token(
             self,
-            token
+            token,
+            validate_response=True
     ):
         """
         Activate registered user
@@ -50,46 +64,60 @@ class AccountApi(RestClient):
             path=f'/v1/account/{token}',
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Сменить почту зарегистрированного пользователя")
     def put_v1_account_email(
             self,
-            json_data
+            change_email=ChangeEmail,
+            validate_response=True
     ):
         headers = {
             'accept': 'text/plain',
         }
         response = self.put(
             path=f'/v1/account/email',
-            json=json_data,
+            json=change_email.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Сменить пароль зарегистрированного пользователя")
     def put_v1_account_password(
             self,
-            json_data
+            change_password=ChangePassword,
+            validate_response=True
     ):
         headers = {
             'accept': 'text/plain',
         }
         response = self.put(
             path=f'/v1/account/password',
-            json=json_data,
+            json=change_password.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Сбросить пароль зарегистрированного пользователя")
     def post_v1_account_password(
             self,
-            json_data,
-            headers
+            reset_password: ResetPassword,
+            headers,
+            validate_response=True
     ):
         headers = {
             'accept': 'text/plain',
         }
         response = self.post(
             path=f'/v1/account/password',
-            json=json_data
+            json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
