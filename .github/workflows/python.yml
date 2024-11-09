@@ -25,7 +25,8 @@ jobs:
         run: |
           pytest ./tests --alluredir=../allure-results --disble-warnings
         continue-on-error: true
-
+      - name: Verify allure-results
+        run: ls -R allure-results
       - name: Archive alllure results
         uses: actions/upload-artifact@v3
         with:
