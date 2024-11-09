@@ -69,6 +69,8 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1.2.9
+      - run: echo "https://pavelgribanovqa.github.io/dm_api_tests/"
+
 
 
 
